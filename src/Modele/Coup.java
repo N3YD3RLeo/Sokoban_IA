@@ -34,7 +34,7 @@ public class Coup {
 	Sequence<Marque> marques;
 	int dirPousseurL, dirPousseurC;
 
-	Coup() {
+	public Coup() {
 		marques = Configuration.nouvelleSequence();
 	}
 

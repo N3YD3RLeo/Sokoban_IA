@@ -1,3 +1,4 @@
+package Modele;
 /*
  * Sokoban - Encore une nouvelle version (à but pédagogique) du célèbre jeu
  * Copyright (C) 2018 Guillaume Huard
@@ -25,36 +26,30 @@
  *          38401 Saint Martin d'Hères
  */
 
-import Controleur.ControleurMediateur;
 import Global.Configuration;
-import Modele.Jeu;
-import Modele.LecteurNiveaux;
-import Vue.CollecteurEvenements;
-import Vue.InterfaceGraphique;
-import Vue.InterfaceTextuelle;
+import Structures.Position;
+import Structures.Sequence;
+import Utile.Dijkstra;
 
-import java.io.InputStream;
+class IAAssistance extends IA {
 
-public class Sokoban {
-	final static String typeInterface = Configuration.typeInterface;
+	Position pousseur;
 
-	public static void main(String[] args) {
-		InputStream in;
-		in = Configuration.ouvre("Niveaux/Tests.txt");
-		Configuration.info("Niveaux trouvés");
-
-		LecteurNiveaux l = new LecteurNiveaux(in);
-		Jeu j = new Jeu(l);
-		CollecteurEvenements control = new ControleurMediateur(j);
-		switch (typeInterface) {
-			case "Graphique":
-				InterfaceGraphique.demarrer(j, control);
-				break;
-			case "Textuelle":
-				InterfaceTextuelle.demarrer(j, control);
-				break;
-			default:
-				Configuration.erreur("Interface inconnue");
-		}
+	public IAAssistance() {
 	}
+
+	@Override
+	public Sequence<Coup> joue() {
+		Sequence<Coup> resultat = Configuration.nouvelleSequence();
+
+		Dijkstra caisseAccesible = new Dijkstra(niveau);
+
+		caisseAccesible.InitPlusCourtCheminVersCaisse(niveau.lignePousseur(), niveau.colonnePousseur());
+
+		resultat = caisseAccesible.DeplacerVersPos(resultat, caisseAccesible.positionDevantCaisse);
+		resultat.insereTete(caisseAccesible.Marque());
+
+		return resultat;
+	}
+
 }

@@ -74,7 +74,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur {
 		chrono.start();
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 300);
+		frame.setSize(1000, 600);
 		frame.setVisible(true);
 	}
 
