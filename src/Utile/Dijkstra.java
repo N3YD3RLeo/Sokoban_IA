@@ -9,6 +9,7 @@ import Structures.Sequence;
 
 public class Dijkstra {
 
+	/* TODO: BUG: Le déplacement de la caisse ne prend pas en compte la position du pousseur */
 	Niveau niveau;
 	Graphe accessiblePousseur;
 	Graphe accessibleCaisse;
