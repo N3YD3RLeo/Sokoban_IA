@@ -9,7 +9,7 @@ import Structures.Sequence;
 
 public class Dijkstra {
 
-	Niveau niveau;
+	public Niveau niveau;
 	Graphe accessiblePousseur;
 	Graphe accessibleCaisse;
 	Coup marque = new Coup();
@@ -41,7 +41,7 @@ public class Dijkstra {
 			marque.ajouteMarque(newLig, newCol, 0x11CCCC);
 			positionBut = new Position(newLig, newCol, positionCaisse);
 		}
-		else if((niveau.estOccupable(newLig, newCol) || niveau.aPousseur(newLig, newCol)) && (accessiblePousseur.At(befLig, befCol) != null) && (accessiblePousseur.At(befLig, befCol).EstVisite())){
+		else if((niveau.estOccupable(newLig, newCol) || niveau.aPousseur(newLig, newCol)) && (accessiblePousseur.At(befLig, befCol) != null && accessiblePousseur.At(befLig, befCol).EstVisite())){
 			if(nextPos == null) {
 				nextPos = new Position(newLig, newCol, positionCaisse, positionCaisse.Distance() + 1);
 //				nextPos.chemin = DeplacerVersPos(Configuration.nouvelleSequence(), accessiblePousseur.At(befLig, befCol));
@@ -63,9 +63,10 @@ public class Dijkstra {
 		caisseAvant = new Position(ligne, colonne, null);
 		accessibleCaisse = new Graphe(niveau.lignes(), niveau.colonnes());
 		newCaisse = new Position(ligne, colonne, null);
+		newCaisse.SetDistance(0);
 		accessibleCaisse.At(ligne, colonne, newCaisse);
-		Position pousseur = new Position(lignePousseur, colonnePousseur, null);
-		accessibleCaisse.At(lignePousseur, colonnePousseur, pousseur);
+		pousseur = new Position(lignePousseur, colonnePousseur, null);
+//		accessibleCaisse.At(lignePousseur, colonnePousseur, pousseur);
 		ButAccessible(newCaisse, pousseur);
 	}
 
@@ -92,7 +93,7 @@ public class Dijkstra {
 			positionDevantCaisse = position;
 			caisse = new Position(newLig, newCol, null);
 		}
-		else if(((newLig == ligneToIgnore && newCol == colonneToIgnore) || niveau.estOccupable(newLig, newCol)) && !(newLig == ligneToInvent && newCol == colonneToInvent)){
+		else if(((newLig == ligneToIgnore && newCol == colonneToIgnore) || niveau.estOccupable(newLig, newCol) || niveau.aPousseur(newLig, newCol)) && !(newLig == ligneToInvent && newCol == colonneToInvent)){
 			if(nextPos == null) {
 				nextPos = new Position(newLig, newCol, position, position.Distance() + 1);
 				accessiblePousseur.At(newLig, newCol, nextPos);
@@ -111,6 +112,7 @@ public class Dijkstra {
 
 		accessiblePousseur = new Graphe(niveau.lignes(), niveau.colonnes());
 		pousseur = new Position(ligne, colonne, null);
+		pousseur.SetDistance(0);
 		accessiblePousseur.At(ligne, colonne, pousseur);
 		CaisseAccessible(pousseur, ligneToIgnore, colonneToIgnore, ligneToInvent, colonneToInvent);
 	}
@@ -147,17 +149,20 @@ public class Dijkstra {
 		Sequence<Coup> resultat_invert = Configuration.nouvelleSequence();
 		Coup deplacement;
 		Position ancien;
+		Coup marque = new Coup();
 
 		while (ancetre != null){
 			deplacement = new Coup();
 
 			deplacement.deplacementPousseur(ancetre.Ligne(), ancetre.Colonne(), currentPos.Ligne(), currentPos.Colonne());
+			marque.ajouteMarque(ancetre.Ligne(), ancetre.Colonne(), 0xCC8811);
 			currentPos = ancetre;
 			ancetre = currentPos.Ancetre();
 //			resultat.insereTete(deplacement);
 			resultat_invert.insereTete(deplacement);
 		}
 
+		pousseur = new Position(niveau.lignePousseur(), niveau.colonnePousseur(), null);
 		System.out.println(pousseur);
 		System.out.println(currentPos);
 
@@ -166,16 +171,16 @@ public class Dijkstra {
 			deplacement = resultat_invert.extraitTete();
 			ancien = pousseur;
 			pousseur = new Position(currentPos.Ligne()-deplacement.dirPousseurL(), currentPos.Colonne()-deplacement.dirPousseurC(), null);
-			System.out.println("Ancien" + ancien);
-			System.out.println("Pousseur" + pousseur);
-			System.out.println("Caisse" + currentPos);
+//			System.out.println("Ancien" + ancien);
+//			System.out.println("Pousseur" + pousseur);
+//			System.out.println("Caisse" + currentPos);
 			deplacement2 = new Coup();
 			deplacement2.deplacementPousseur(ancien.Ligne(), ancien.Colonne(), pousseur.Ligne(), pousseur.Colonne());
 			resultat.insereQueue(deplacement2);
 			resultat.insereQueue(deplacement);
 			currentPos = new Position(currentPos.Ligne()+deplacement.dirPousseurL(), currentPos.Colonne()+deplacement.dirPousseurC(), null);
 		}
-
+		resultat.insereTete(marque);
 		return resultat;
 	}
 

@@ -6,7 +6,7 @@ import Structures.Sequence;
 public class Position {
 
 	int ligne, colonne;
-	int distance = 0;
+	int distance = -1;
 	boolean est_visite = false;
 	Position ancetre;
 
@@ -27,8 +27,12 @@ public class Position {
 		return distance;
 	}
 
+	public void SetDistance(int distance) {
+		this.distance = distance;
+	}
+
 	public boolean SetDistanceMin(Position newAncetre){
-		if (distance == 0){
+		if (distance == -1){
 			distance = newAncetre.distance+1;
 			ancetre = newAncetre;
 			return true;

@@ -42,7 +42,7 @@ class IAAssistance extends IA {
 		Coup coup = new Coup();
 		for (int l = 0; l < niveau.lignes(); l++) {
 			for (int c = 0; c < niveau.colonnes(); c++) {
-				int marque = niveau.marque(l, c);
+//				int marque = niveau.marque(l, c);
 				coup.ajouteMarque(l, c, 0);
 			}
 		}
@@ -55,22 +55,24 @@ class IAAssistance extends IA {
 
 		Dijkstra caisseAccesible = new Dijkstra(niveau);
 
-//		resultat.insereTete(SupprimerMarques());
 
 		caisseAccesible.InitCaisseAccessible(niveau.lignePousseur(), niveau.colonnePousseur(), -1, -1, -1, -1);
 		resultat.insereTete(caisseAccesible.Marque());
-		
+
 		Dijkstra butAccessible = new Dijkstra(niveau);
 		butAccessible.InitButAccessible(caisseAccesible.caisse.Ligne(), caisseAccesible.caisse.Colonne(), niveau.lignePousseur(), niveau.colonnePousseur());
 
-		resultat.insereTete(butAccessible.Marque());
-		
+
 		if (butAccessible.positionBut != null){
 			resultat = butAccessible.DeplacerVersButPos(resultat, butAccessible.positionBut);
 		}else{
 			System.out.println("Pas de solution...");
 		}
-		
+		resultat.insereTete(butAccessible.Marque());
+
+//		niveau = butAccessible.niveau;
+
+//		resultat.insereQueue(SupprimerMarques());
 		return resultat;
 	}
 
