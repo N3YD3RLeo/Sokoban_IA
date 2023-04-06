@@ -9,7 +9,6 @@ import Structures.Sequence;
 
 public class Dijkstra {
 
-	/* TODO: BUG: Le déplacement de la caisse ne prend pas en compte la position du pousseur */
 	Niveau niveau;
 	Graphe accessiblePousseur;
 	Graphe accessibleCaisse;
@@ -39,16 +38,19 @@ public class Dijkstra {
 		Position nextPos = accessibleCaisse.At(newLig, newCol);
 		Position nextPosPousseur = new Position(befLig, befCol, null);
 		if((niveau.aBut(newLig, newCol)) && (accessiblePousseur.At(befLig, befCol) != null) && (accessiblePousseur.At(befLig, befCol).EstVisite())){
-			marque.ajouteMarque(newLig, newCol, 0xAAAA22);
+			marque.ajouteMarque(newLig, newCol, 0x11CCCC);
 			positionBut = new Position(newLig, newCol, positionCaisse);
 		}
 		else if((niveau.estOccupable(newLig, newCol) || niveau.aPousseur(newLig, newCol)) && (accessiblePousseur.At(befLig, befCol) != null) && (accessiblePousseur.At(befLig, befCol).EstVisite())){
 			if(nextPos == null) {
 				nextPos = new Position(newLig, newCol, positionCaisse, positionCaisse.Distance() + 1);
+//				nextPos.chemin = DeplacerVersPos(Configuration.nouvelleSequence(), accessiblePousseur.At(befLig, befCol));
+
 				accessibleCaisse.At(newLig, newCol, nextPos);
 				ButAccessible(nextPos, nextPosPousseur);
 			}
 			else if(nextPos.SetDistanceMin(positionCaisse)){
+//				nextPos.chemin = DeplacerVersPos(Configuration.nouvelleSequence(), accessiblePousseur.At(befLig, befCol));
 				VerifButAccessible(nextPos, nextPosPousseur, 1, 0);
 				VerifButAccessible(nextPos, nextPosPousseur, -1, 0);
 				VerifButAccessible(nextPos, nextPosPousseur, 0, 1);
@@ -72,7 +74,7 @@ public class Dijkstra {
 			return;
 		}
 		accessibleCaisse.AtPos(positionCaisse).Visitite();
-		marque.ajouteMarque(positionCaisse.Ligne(), positionCaisse.Colonne(), 0xAAAA22);
+		marque.ajouteMarque(positionCaisse.Ligne(), positionCaisse.Colonne(), 0xCCCC22);
 		VerifButAccessible(positionCaisse, positionPousseur, 1, 0);
 		VerifButAccessible(positionCaisse, positionPousseur, -1, 0);
 		VerifButAccessible(positionCaisse, positionPousseur, 0, -1);
@@ -144,30 +146,35 @@ public class Dijkstra {
 		Position ancetre = position.Ancetre();
 		Sequence<Coup> resultat_invert = Configuration.nouvelleSequence();
 		Coup deplacement;
+		Position ancien;
+
 		while (ancetre != null){
 			deplacement = new Coup();
 
 			deplacement.deplacementPousseur(ancetre.Ligne(), ancetre.Colonne(), currentPos.Ligne(), currentPos.Colonne());
 			currentPos = ancetre;
 			ancetre = currentPos.Ancetre();
-//			pousseur = new Position(position.Ligne()+(position.Ligne()-ancetre.Ligne()), position.Colonne()+(position.Colonne()-ancetre.Colonne()), null);
-			resultat.insereTete(deplacement);
-//			resultat_invert.insereTete(deplacement);
-		}
-//		int i=0;
-//		while(!resultat_invert.estVide()){
-//			deplacement = resultat_invert.extraitTete();
 //			resultat.insereTete(deplacement);
-//			Dijkstra caisseAccesible = new Dijkstra(niveau);
-//			System.out.println("Pousseur : " + pousseur);
-//			caisseAccesible.InitCaisseAccessible(pousseur.Ligne(), pousseur.Colonne(), currentPos.Ligne(), currentPos.Colonne(), -1, -1);
-//			resultat = DeplacerVersPos(resultat, caisseAccesible.accessiblePousseur.At(currentPos.Ligne()-deplacement.dirPousseurL(), currentPos.Colonne()-deplacement.dirPousseurC()));
-//			pousseur = new Position(currentPos.Ligne()-deplacement.dirPousseurL(), currentPos.Colonne()-deplacement.dirPousseurC(), null);
-//			currentPos = new Position(currentPos.Ligne()+deplacement.dirPousseurL(), currentPos.Colonne()+deplacement.dirPousseurC(), null);
-//			System.out.println("PousseurApres : " + pousseur);
-//			System.out.println("currentPos : " + currentPos);
-////			i++;
-//		}
+			resultat_invert.insereTete(deplacement);
+		}
+
+		System.out.println(pousseur);
+		System.out.println(currentPos);
+
+		Coup deplacement2 = new Coup();
+		while(!resultat_invert.estVide()){
+			deplacement = resultat_invert.extraitTete();
+			ancien = pousseur;
+			pousseur = new Position(currentPos.Ligne()-deplacement.dirPousseurL(), currentPos.Colonne()-deplacement.dirPousseurC(), null);
+			System.out.println("Ancien" + ancien);
+			System.out.println("Pousseur" + pousseur);
+			System.out.println("Caisse" + currentPos);
+			deplacement2 = new Coup();
+			deplacement2.deplacementPousseur(ancien.Ligne(), ancien.Colonne(), pousseur.Ligne(), pousseur.Colonne());
+			resultat.insereQueue(deplacement2);
+			resultat.insereQueue(deplacement);
+			currentPos = new Position(currentPos.Ligne()+deplacement.dirPousseurL(), currentPos.Colonne()+deplacement.dirPousseurC(), null);
+		}
 
 		return resultat;
 	}
