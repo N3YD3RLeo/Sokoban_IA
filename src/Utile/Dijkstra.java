@@ -83,13 +83,13 @@ public class Dijkstra {
 		int newCol = position.Colonne()+dCol;
 
 		Position nextPos = accessiblePousseur.At(newLig, newCol);
-		if((!(newLig == ligneToIgnore && newCol == colonneToIgnore) && niveau.aCaisse(newLig, newCol)) &&
+		if(((!(newLig == ligneToIgnore && newCol == colonneToIgnore) && niveau.aCaisse(newLig, newCol)) || (newLig == ligneToInvent && newCol == colonneToInvent)) &&
 				(niveau.estOccupable(newLig+dLig, newCol+dCol) || niveau.aPousseur(newLig+dLig, newCol+dCol))){
 //			marque.ajouteMarque(position.Ligne(), position.Colonne(), 0x2222AA);
 			positionDevantCaisse = position;
 			caisse = new Position(newLig, newCol, null);
 		}
-		else if((newLig == ligneToIgnore && newCol == colonneToIgnore) || niveau.estOccupable(newLig, newCol)){
+		else if(((newLig == ligneToIgnore && newCol == colonneToIgnore) || niveau.estOccupable(newLig, newCol)) && !(newLig == ligneToInvent && newCol == colonneToInvent)){
 			if(nextPos == null) {
 				nextPos = new Position(newLig, newCol, position, position.Distance() + 1);
 				accessiblePousseur.At(newLig, newCol, nextPos);
