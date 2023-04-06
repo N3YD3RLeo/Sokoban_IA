@@ -28,6 +28,11 @@ public class Position {
 	}
 
 	public boolean SetDistanceMin(Position newAncetre){
+		if (distance == 0){
+			distance = newAncetre.distance+1;
+			ancetre = newAncetre;
+			return true;
+		}
 		if (distance > newAncetre.distance+1){
 			distance = newAncetre.distance+1;
 			ancetre = newAncetre;

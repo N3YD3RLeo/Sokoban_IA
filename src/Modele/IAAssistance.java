@@ -38,11 +38,24 @@ class IAAssistance extends IA {
 	public IAAssistance() {
 	}
 
+	public Coup SupprimerMarques(){
+		Coup coup = new Coup();
+		for (int l = 0; l < niveau.lignes(); l++) {
+			for (int c = 0; c < niveau.colonnes(); c++) {
+				int marque = niveau.marque(l, c);
+				coup.ajouteMarque(l, c, 0);
+			}
+		}
+		return coup;
+	}
+
 	@Override
 	public Sequence<Coup> joue() {
 		Sequence<Coup> resultat = Configuration.nouvelleSequence();
 
 		Dijkstra caisseAccesible = new Dijkstra(niveau);
+
+//		resultat.insereTete(SupprimerMarques());
 
 		caisseAccesible.InitPlusCourtCheminVersCaisse(niveau.lignePousseur(), niveau.colonnePousseur());
 
