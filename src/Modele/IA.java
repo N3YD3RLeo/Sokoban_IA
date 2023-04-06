@@ -30,7 +30,7 @@ import Global.Configuration;
 import Structures.Sequence;
 
 public abstract class IA {
-	private Jeu jeu;
+	Jeu jeu;
 	Niveau niveau;
 
 	public static IA nouvelle(Jeu j) {
