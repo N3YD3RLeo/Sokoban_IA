@@ -59,20 +59,18 @@ class IAAssistance extends IA {
 
 		caisseAccesible.InitCaisseAccessible(niveau.lignePousseur(), niveau.colonnePousseur(), -1, -1, -1, -1);
 		resultat.insereTete(caisseAccesible.Marque());
-
-//		if (caisseAccesible.positionDevantCaisse != null){
-//			resultat = caisseAccesible.DeplacerVersPos(resultat, caisseAccesible.positionDevantCaisse);
-//		}else{
-//			System.out.println("Pas de solutions...");
-//		}
-
+		
 		Dijkstra butAccessible = new Dijkstra(niveau);
 		butAccessible.InitButAccessible(caisseAccesible.caisse.Ligne(), caisseAccesible.caisse.Colonne(), niveau.lignePousseur(), niveau.colonnePousseur());
 
 		resultat.insereTete(butAccessible.Marque());
-
-		resultat = butAccessible.DeplacerVersButPos(resultat, butAccessible.positionBut);
-
+		
+		if (butAccessible.positionBut != null){
+			resultat = butAccessible.DeplacerVersButPos(resultat, butAccessible.positionBut);
+		}else{
+			System.out.println("Pas de solution...");
+		}
+		
 		return resultat;
 	}
 
